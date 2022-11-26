@@ -4,9 +4,8 @@
 #include <signal.h>
 #include <unistd.h>
 #include <time.h>
-#include <stdbool.h>
 
-bool cont = true; 
+int go_on = 1; 
 int num_of_alarms = 0;
 time_t start, end;
 
@@ -14,8 +13,8 @@ time_t start, end;
 void handler(int signum)
 { //signal handler
   printf("Hello World!\n");
-    cont = false;
-  // exit(1); //exit after printing
+  go_on = 0;
+  num_of_alarms +=1;
 }
 
 void handler_interrupt(int signum){
@@ -29,18 +28,13 @@ void handler_interrupt(int signum){
 int main(int argc, char * argv[])
 {
   start = time(NULL);
-  signal(SIGALRM,handler); //register handler to handle SIGALRM
+  signal(SIGALRM, handler); //register handler to handle SIGALRM
   signal(SIGINT, handler_interrupt);
-  while (true) {
+  while (1) {
     alarm(1); //Schedule a SIGALRM for 1 second
-    pause();
-    while(cont); 
+    while(go_on); 
     printf("Turning was right!\n");
-    cont = true;
-    num_of_alarms +=1;
-
-
-  
+    go_on = 1;
   }
   return 0; //never reached
 }

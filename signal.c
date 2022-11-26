@@ -5,20 +5,22 @@
 #include <unistd.h>
 #include <time.h>
 
+int go_on = 1;
 
 void handler(int signum)
 { //signal handler
   printf("Hello World!\n");
-  exit(1); //exit after printing
+  go_on = 0;
 }
 
 int main(int argc, char * argv[])
 {
   signal(SIGALRM,handler); //register handler to handle SIGALRM
-  alarm(1); //Schedule a SIGALRM for 1 second
   while(1){
-    sleep(1);
+    alarm(1); //Schedule a SIGALRM for 1 second
+    while(go_on);
     printf("Turning was right!\n");
+    go_on = 1;
   }
   return 0; //never reached
 }
